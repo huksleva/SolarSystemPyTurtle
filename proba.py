@@ -2,9 +2,13 @@ import turtle
 import time
 import math
 
+
+
+
 # Настройка экрана
 screen = turtle.Screen()
 screen.bgcolor("black")
+screen.bgpic("stars.png")
 screen.setup(1920, 1080)
 screen.title("Симуляция Солнечной системы")
 
