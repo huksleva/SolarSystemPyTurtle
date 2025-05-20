@@ -1,10 +1,12 @@
 import turtle
+import time
 import math
 from operator import index
 
 # Настройка экрана
 screen = turtle.Screen()
 screen.bgcolor("black")
+screen.setup(1920, 1080)
 screen.title("Симуляция Солнечной системы")
 
 # Все данные взяты с сайта NASA
@@ -55,10 +57,10 @@ spd_Neptune = 5430
 global_scale = 10^-7
 
 # Переменная для сокращения расстояния от планеты до Солнца в 10 млн раз для наглядного представления
-smaller_dist = 1
+smaller_dist = 1000000000
 
 # Во сколько раз планеты будут на анимации больше, чем в реальности и расчётах соответственно
-bigger_size = 1
+bigger_size = 100
 
 
 
@@ -79,14 +81,14 @@ sun.shapesize(r_Sun/smaller_dist)
 
 # Параметры планет
 planets_data = [
-    ("Меркурий", dist_Mercurian/smaller_dist, r_Mercurian/r_Sun*bigger_size, 0, "gray"),
-    ("Венера", dist_Venus/smaller_dist, r_Venus/r_Sun*bigger_size, 0, "orange"),
-    ("Земля", dist_Earth/smaller_dist, r_Earth/r_Sun*bigger_size, 0, "blue"),
-    ("Марс", dist_Mars/smaller_dist, r_Mars/r_Sun*bigger_size, 0, "red"),
-    ("Юпитер", dist_Jupiter/smaller_dist, r_Jupiter/r_Sun*bigger_size, 0, "brown"),
-    ("Сатурн", dist_Saturn/smaller_dist, r_Saturn/r_Sun*bigger_size, 0, "green"),
-    ("Уран", dist_Uranus/smaller_dist, r_Uranus/r_Sun*bigger_size, 0, "yellow"),
-    ("Нептун", dist_Neptune/smaller_dist, r_Neptune/r_Sun*bigger_size, 0, "orange")
+    ("Меркурий", dist_Mercurian/smaller_dist, r_Mercurian/r_Sun*bigger_size, spd_Mercurian, "gray"),
+    ("Венера", dist_Venus/smaller_dist, r_Venus/r_Sun*bigger_size, spd_Venus, "orange"),
+    ("Земля", dist_Earth/smaller_dist, r_Earth/r_Sun*bigger_size, spd_Earth, "blue"),
+    ("Марс", dist_Mars/smaller_dist, r_Mars/r_Sun*bigger_size, spd_Mars, "red"),
+    ("Юпитер", dist_Jupiter/smaller_dist, r_Jupiter/r_Sun*bigger_size, spd_Jupiter, "brown"),
+    ("Сатурн", dist_Saturn/smaller_dist, r_Saturn/r_Sun*bigger_size, spd_Saturn, "green"),
+    ("Уран", dist_Uranus/smaller_dist, r_Uranus/r_Sun*bigger_size, spd_Uranus, "yellow"),
+    ("Нептун", dist_Neptune/smaller_dist, r_Neptune/r_Sun*bigger_size, spd_Neptune, "orange")
 ]
 
 # Выстраиваем парад планет
@@ -103,8 +105,14 @@ for name, distance_from_sun, radius, speed, color in planets_data:
 
 
 # Начинаем движение
+while True:
+    for planet in planets:
+        planet.goto()
+
+
+    # Движение объектов в программе дискретно и на каждый шаг тратится времени: time.sleep(1) = 1 секунда
+    time.sleep(1)
 
 
 
 
-screen.mainloop()
