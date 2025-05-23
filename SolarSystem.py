@@ -5,18 +5,32 @@ from constants import *
 # Настройка экрана
 screen = turtle.Screen()
 screen.bgcolor("black")
-screen.setup(1920, 1080)
+screen.setup(1920, 1080, 0, 0)
 screen.title("Симуляция Солнечной системы")
+screen.bgpic("stars.png")
+screen.tracer(0)
+
+
+# Текстовое поле для отображения времени
+time_turtle = turtle.Turtle()
+time_turtle.hideturtle()
+time_turtle.penup()
+time_turtle.color("white")
+time_turtle.goto(-900, 480)  # Левый верхний угол
+sim_days = 0  # Счётчик дней внутри симуляции
+
+
+
 
 
 # Масштаб всей симуляции. 0 < global_scale < 1 - уменьшить масштаб, 1 < global_scale - увеличить масштаб
-global_scale = 10^-7
+global_scale = 1e-7
 
 # Переменная для сокращения расстояния от планеты до Солнца в 10 млн раз для наглядного представления
-smaller_dist = 1000000000
+smaller_dist = 1e8
 
 # Во сколько раз планеты будут на анимации больше, чем в реальности и расчётах соответственно
-bigger_size = 100
+bigger_size = 1e1
 
 
 
@@ -54,10 +68,11 @@ for name, distance_from_sun, radius, speed, color in planets_data:
     # planet.penup()
     planet.shape("circle")
     planet.color(color)
-    planet.speed(0)  # Многвенное движение, без анимаций
+    planet.speed(0)  # Мгновенное движение, без анимаций
     planet.goto(distance_from_sun, 0)  # Начальная позиция на орбите
     planet.shapesize(radius)  # Размер планеты
     planets[name] = planet  # Добавляем планету в словарь планет
+
 
 
 # Начинаем движение
