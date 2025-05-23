@@ -3,8 +3,6 @@ import time
 import math
 
 
-
-
 # Настройка экрана
 screen = turtle.Screen()
 screen.bgcolor("black")
