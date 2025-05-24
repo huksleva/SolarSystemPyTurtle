@@ -28,6 +28,16 @@ days_per_frame = 10    # На сколько дней увеличивается
 
 
 
+# === Черепашка для отображения информации ===
+info_turtle = turtle.Turtle()
+info_turtle.hideturtle()
+info_turtle.penup()
+info_turtle.color("lightgray")
+info_turtle.goto(600, 480)  # Правый верхний угол
+
+
+
+
 # Масштаб всей симуляции, подгонял вручную. Если хочется реального размера, то везде нужно выставить значение 1.
 smaller_dist = 3e6
 bigger_size = 5e-9
@@ -43,13 +53,14 @@ bigger_size = 5e-9
 # Выстраиваем парад планет
 planets = {}
 for name, data in planets_data.items():
+    # Создаём черепашку-планету
     planet = turtle.Turtle()
     planet.shape("circle")
     planet.color(data["color"])
     planet.penup()
     planet.speed(0)
 
-    # Устанавливаем размер относительно радиуса
+    # Размер планеты
     planet.shapesize(data["radius"] * bigger_size)  # Для наглядности
 
     # Уменьшаем начальное расстояние
@@ -58,7 +69,31 @@ for name, data in planets_data.items():
     # Начинаем планету под углом 0 градусов (по оси X)
     planet.goto(start_distance, 0)
     planet.setheading(90)  # Поворачиваем черепашку вверх (движение будет против часовой)
-    planets[name] = planet
+
+    # Подпись планеты
+    label = turtle.Turtle()
+    label.hideturtle()
+    label.penup()
+    label.color("white")
+    label.goto(start_distance + 10, 5)  # Смещаем чуть вправо и вверх от планеты
+    label.write(name, align="left", font=("Arial", 8, "normal"))
+
+    # Линия следа
+    trail = turtle.Turtle()
+    trail.hideturtle()
+    trail.penup()
+    trail.speed(0)
+    trail.color(planet.pencolor())
+    trail.pensize(1)
+    trail.goto(planet.position()[0], planet.position()[1])
+    trail.pendown()
+
+    planets[name] = {
+        "turtle": planet,
+        "trail": trail,
+        "label": label,
+        "start_distance": start_distance
+    }
 
 
 def increase_time_speed():
@@ -126,10 +161,25 @@ def Update():
 
 
 
+
+def update_info():
+    info_turtle.clear()
+    info_turtle.write(
+        "Управление:\n"
+        "↑ — Ускорить время\n"
+        "↓ — Замедлить время\n"
+        "Пробел — Пауза/Возобновить\n"
+        "+ — Увеличить масштаб\n"
+        "- — Уменьшить масштаб",
+        align="left",
+        font=("Courier", 14, "normal")
+    )
+
+
 # Update() будет выполняться бесконечное кол-во раз, 1 раз за определённый промежуток времени
 # Запуск анимации
 Update()
-
+update_info()
 turtle.mainloop()
 
 
