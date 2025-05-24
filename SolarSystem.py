@@ -1,6 +1,6 @@
 import turtle
-import time
-from constants import *
+from Methods import *
+from proba2 import planets_data
 
 # Настройка экрана
 screen = turtle.Screen()
@@ -37,25 +37,26 @@ bigger_size = 1e1
 # чем должны быть (на физические расчёты не влияет). То есть, если изменить размер Солнца, то поменяются
 # размеры и других планет. Тем, что есть радиус экваториальный, а есть полюсный принебрёг.
 
-# Солнце
-sun = turtle.Turtle()
-sun.shape("circle")
-sun.color("yellow")
-sun.speed(0)
-sun.shapesize(r_Sun/smaller_dist)
 
 
-# Параметры планет
-planets_data = [
-    ("Меркурий", dist_Mercurian/smaller_dist, r_Mercurian/r_Sun*bigger_size, spd_Mercurian, "gray"),
-    ("Венера", dist_Venus/smaller_dist, r_Venus/r_Sun*bigger_size, spd_Venus, "orange"),
-    ("Земля", dist_Earth/smaller_dist, r_Earth/r_Sun*bigger_size, spd_Earth, "blue"),
-    ("Марс", dist_Mars/smaller_dist, r_Mars/r_Sun*bigger_size, spd_Mars, "red"),
-    ("Юпитер", dist_Jupiter/smaller_dist, r_Jupiter/r_Sun*bigger_size, spd_Jupiter, "brown"),
-    ("Сатурн", dist_Saturn/smaller_dist, r_Saturn/r_Sun*bigger_size, spd_Saturn, "green"),
-    ("Уран", dist_Uranus/smaller_dist, r_Uranus/r_Sun*bigger_size, spd_Uranus, "yellow"),
-    ("Нептун", dist_Neptune/smaller_dist, r_Neptune/r_Sun*bigger_size, spd_Neptune, "orange")
-]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Выстраиваем парад планет
 planets = {}
@@ -70,16 +71,24 @@ for name, distance_from_sun, radius, speed, color in planets_data:
     planets[name] = planet  # Добавляем планету в словарь планет
 
 
-
 # Начинаем движение
-while True:
+FPS = 60 # Частота обновления монитора
+DELAY = 1 // FPS # Задержка в милисекундах
+def Update():
     screen.update()
     for planet in planets:
-        planet.goto()
+        planet.goto(UpdatePlanetPosition(planet))
+
+    # Движение объектов в программе дискретно и на каждый шаг тратится времени:
+    turtle.ontimer(Update, DELAY)
 
 
-    # Движение объектов в программе дискретно и на каждый шаг тратится времени: time.sleep(n), то есть n секунд
-    time.sleep(1)
+
+
+# Update() будет выполняться бесконечное кол-во раз, 1 раз за определённый промежуток времени
+Update()
+
+turtle.mainloop()
 
 
 
