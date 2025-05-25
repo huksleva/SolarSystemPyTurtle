@@ -3,75 +3,99 @@
 # G = const
 G = 6.674334e-11
 
-# Все данные взяты с сайта NASA. Все значения представлены в СИ.
-# Радиусы в м. Все значения = const.
-# Массы Солнца и планет в кг. Все значения = const.
-# Дистанция от Солнца до планеты в м. Задаётся только в начале и дальше значения меняются.
-# Начальные скорости планет в м/c. Задаётся только в начале и дальше значения меняются.
+# Константы времени
+SECONDS_IN_DAY = 86400
+DAYS_IN_YEAR = 365.25  # Учёт високосных годов
+YEARS_IN_CENTURY = 100
+WEEKS_IN_YEAR = 52
+DAYS_IN_WEEK = 7
+MONTHS_IN_YEAR = 12
+
+
+
+
+# Все данные взяты с сайта NASA. Все значения представлены в СИ. Все значения = const.
+# Радиусы - м.
+# Массы - кг.
+# Дистанция - м.
+# Скорости - м/c.
+# Время внутри симуляции для планеты за один тик
+
+# Реальные данные о Солнечной системе
+# Числа, на которые делятся или умножаются значения в planets_data, нужны для нормального отображения объектов, чтобы их было видно на экране
 
 planets_data = {
     "Sun": {
-        "radius": 7e8,
+        "radius": 7e8 / 25,
         "mass": 1.989e30,
         "distanceFromSun": 0,
         "speed": 0,
-        "color": "yellow"
+        "color": "yellow", # Жёлтый
+        "timeTick": 0
     },
     "Mercurian": {
-        "radius": 244e4,
+        "radius": 244e4 * 3,
         "mass": 3.3e23,
-        "distanceFromSun": 579e5,
+        "distanceFromSun": 579e8 * 3,
         "speed": 47870,
-        "color": "gray"
+        "color": "#A9A9A9", # Темно-серый, скалистый
+        "timeTick": 0
     },
     "Venus": {
-        "radius": 6051800,
+        "radius": 6051800 * 1.8,
         "mass": 4.9e24,
-        "distanceFromSun": 1082e5,
+        "distanceFromSun": 1082e8 * 3,
         "speed": 35020,
-        "color": "orange"
+        "color": "#FFFFCC", # Белесовато-желтый
+        "timeTick": 0
     },
     "Earth": {
-        "radius": 6371e3,
+        "radius": 6371e3 * 2,
         "mass": 5.97e24,
-        "distanceFromSun": 1496e5,
+        "distanceFromSun": 1496e8 * 3.5,
         "speed": 29780,
-        "color": "blue"
+        "color": "#3D85C6", #
+        "timeTick": 0
     },
     "Mars": {
-        "radius": 339e4,
+        "radius": 339e4 * 2.5,
         "mass": 6.42e23,
-        "distanceFromSun": 2279e5,
+        "distanceFromSun": 2279e8 * 3.5,
         "speed": 24130,
-        "color": "red"
+        "color": "#CC6600", #
+        "timeTick": 0
     },
     "Jupiter": {
-        "radius": 69911e3,
+        "radius": 69911e3 / 4,
         "mass": 1.89e27,
-        "distanceFromSun": 7786e5,
+        "distanceFromSun": 7786e8 * 1.5,
         "speed": 13070,
-        "color": "brown"
+        "color": "#F2D4A2", #
+        "timeTick": 0
     },
     "Saturn": {
-        "radius": 58232e3,
+        "radius": 58232e3 / 4,
         "mass": 5.68e26,
-        "distanceFromSun": 14335e5,
+        "distanceFromSun": 14335e8,
         "speed": 9690,
-        "color": "green"
+        "color": "#E3C891", #
+        "timeTick": 0
     },
     "Uranus": {
-        "radius": 25362e3,
+        "radius": 25362e3 / 2.5,
         "mass": 8.68e25,
-        "distanceFromSun": 28725e5,
+        "distanceFromSun": 28725e8 / 1.8,
         "speed": 6810,
-        "color": "yellow"
+        "color": "#B2FFFF", #
+        "timeTick": 0
     },
     "Neptune": {
-        "radius": 24622e3,
+        "radius": 24622e3 / 2.5,
         "mass": 1.02e26,
-        "distanceFromSun": 44951e5,
+        "distanceFromSun": 44951e8 / 2.5,
         "speed": 5430,
-        "color": "orange"
+        "color": "#3D66FF", #
+        "timeTick": 0
     }
 }
 

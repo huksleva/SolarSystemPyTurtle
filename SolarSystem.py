@@ -24,13 +24,12 @@ time_display.color("white")
 time_display.goto(0, 0)  # Под текущим текстом
 
 sim_days = 0           # Счётчик дней внутри симуляции
-days_per_frame = 10    # На сколько дней увеличивается время за один кадр
+SlowPlanet = 20    # Во сколько раз замедлится движение планет
 
 
-
-# Масштаб всей симуляции, подгонял вручную. Если хочется реального размера, то везде нужно выставить значение 1.
-smaller_dist = 3e6
-bigger_size = 5e-9
+# Масштаб всей симуляции, подгонял вручную.
+smaller_dist = 4e9
+bigger_size = 9e-8
 
 
 # Размер планет в масштабе относительно Солнца умноженный на 100, то есть все планеты больше в 100 раз,
@@ -59,17 +58,18 @@ for name, data in planets_data.items():
     planet.goto(start_distance, 0)
     planet.setheading(90)  # Поворачиваем черепашку вверх (движение будет против часовой)
     planets[name] = planet
+    print("Создан объект:", name)
 
-
+# Обработка нажатий клавиш
 def increase_time_speed():
     global sim_time_speed
     sim_time_speed *= 1.5
-    print(f"[Ускорение времени] x{sim_time_speed:.2f}")
+    print(f"[Ускорение времени] x{sim_time_speed:.4f}")
 
 def decrease_time_speed():
     global sim_time_speed
     sim_time_speed /= 1.5
-    print(f"[Замедление времени] x{sim_time_speed:.2f}")
+    print(f"[Замедление времени] x{sim_time_speed:.4f}")
 
 def toggle_pause():
     global paused
@@ -85,16 +85,22 @@ screen.listen()
 
 # Начинаем движение
 def Update():
-    global sim_days, sim_start_date, last_update_time, paused
+    # Делаем нужные нам переменные доступными в функции Update
+    global sim_days, days_per_frame, sim_start_date, last_update_time, paused
 
-    screen.update()  # Обновляем экран, чтобы видеть изменения
+    # Обновляем экран в ручную, чтобы видеть изменения
+    screen.update()
 
+    # Если не нажат пробел, то обновляем позиции объектов, иначе пропускаем обновление позиции объектов
     if not paused:
         current_real_time = datetime.now()
 
+        # Задержка выполнения Update
+        # Задержка нужна, чтобы Update выполнялся с определённой частотой
+        # Итог: частота кадров монитора = частота кадров приложения
         if last_update_time is None:
             last_update_time = current_real_time
-            screen.ontimer(Update, int(DELAY * 1000))
+            screen.ontimer(Update, int(DELAY * 1000)) # *1000, потому что Ontimer принимает значения в милисекундах
             return
 
         delta_real = (current_real_time - last_update_time).total_seconds()
@@ -105,13 +111,15 @@ def Update():
         last_update_time = current_real_time
 
         # === Обновляем позиции планет ===
+        print("Тайм тик планет:")
         for name in planets:
             if name != "Sun":
-                UpdatePlanetPosition(planets, "Sun", name, sim_time_speed)
-
+                planetTickTime = UpdatePlanetPosition(planets, name, sim_time_speed / SlowPlanet)
+                print(name + f": {planetTickTime:.7f}")
+        print()
     # === Обновление текста ===
     time_display.clear()
-    status = "Пауза" if paused else f"Скорость: x{sim_time_speed:.1f}"
+    status = "Пауза" if paused else f"Скорость: x{sim_time_speed:.2f}"
     time_display.goto(-950, 500)
     time_display.write(
         f"Дата: {sim_start_date.day:02d}.{sim_start_date.month:02d}.{sim_start_date.year}   "
