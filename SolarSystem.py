@@ -23,7 +23,7 @@ time_display.penup()
 time_display.color("white")
 time_display.goto(0, 0)  # Под текущим текстом
 
-sim_days = 0           # Счётчик дней внутри симуляции
+sim_start_seconds = 0  # Счётчик секунд внутри симуляции. Начинаем от нуля.
 SlowPlanet = 20    # Во сколько раз замедлится движение планет
 
 
@@ -86,7 +86,7 @@ screen.listen()
 # Начинаем движение
 def Update():
     # Делаем нужные нам переменные доступными в функции Update
-    global sim_days, days_per_frame, sim_start_date, last_update_time, paused
+    global sim_start_seconds, days_per_frame, sim_start_date, last_update_time, paused
 
     # Обновляем экран в ручную, чтобы видеть изменения
     screen.update()
@@ -105,29 +105,49 @@ def Update():
 
         delta_real = (current_real_time - last_update_time).total_seconds()
         delta_sim_seconds = delta_real * sim_time_speed
+        sim_start_seconds += delta_sim_seconds
 
         # Обновляем симуляционное время
         sim_start_date += timedelta(seconds=delta_sim_seconds)
         last_update_time = current_real_time
 
         # === Обновляем позиции планет ===
-        print("Тайм тик планет:")
+        #print("Тайм тик планет:")
         for name in planets:
             if name != "Sun":
-                planetTickTime = UpdatePlanetPosition(planets, name, sim_time_speed / SlowPlanet)
-                print(name + f": {planetTickTime:.7f}")
-        print()
-    # === Обновление текста ===
-    time_display.clear()
-    status = "Пауза" if paused else f"Скорость: x{sim_time_speed:.2f}"
-    time_display.goto(-950, 500)
-    time_display.write(
-        f"Дата: {sim_start_date.day:02d}.{sim_start_date.month:02d}.{sim_start_date.year}   "
-        f"Время: {sim_start_date.hour:02d}:{sim_start_date.minute:02d}:{sim_start_date.second:02d}   "
-        f"{status}",
-        align="left",
-        font=("Courier", 16, "normal")
-    )
+                UpdatePlanetPosition(planets, name, sim_time_speed / SlowPlanet)
+                #print(name + f": {planetTickTime:.7f}")
+        #print()
+
+
+
+
+        # === Отображение времени ===
+        time_display.clear()
+
+        total_days = sim_start_seconds / SECONDS_IN_DAY
+        centuries = int(total_days // (DAYS_IN_YEAR * YEARS_IN_CENTURY))
+        remaining_days = total_days % (DAYS_IN_YEAR * YEARS_IN_CENTURY)
+
+        years = int(remaining_days // DAYS_IN_YEAR)
+        remaining_days %= DAYS_IN_YEAR
+
+        months = int(remaining_days // (DAYS_IN_YEAR / MONTHS_IN_YEAR))
+        remaining_days %= (DAYS_IN_YEAR / MONTHS_IN_YEAR)
+
+        weeks = int(remaining_days // DAYS_IN_WEEK)
+        days = int(remaining_days % DAYS_IN_WEEK)
+
+        status = "Пауза" if paused else f"Скорость: x{sim_time_speed:.2f}"
+
+        time_display.goto(-950, 500)
+        time_display.write(
+            f"Время: {centuries:02d}:{years:02d}:{months:02d}:{weeks:02d}:{days:02d}   {status}",
+            align="left",
+            font=("Courier", 16, "normal")
+        )
+
+
 
     # === Планируем следующее обновление ===
     screen.ontimer(Update, int(DELAY * 1000))

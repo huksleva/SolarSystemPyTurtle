@@ -40,13 +40,16 @@ def UpdatePlanetPosition(planets, name, sim_time_speed):
 
     # Обновляем угол.
     # Минус для вращения против часовой стрелки
-    newAngle = angle - angular_speed * DELAY * sim_time_speed / h
+    angle -= angular_speed * DELAY * sim_time_speed / h
 
-    # Расстояние, которое прошла планета в симуляции в метрах
-    l = abs(newAngle - angle) * h
 
-    # Время в симуляции, потраченное планетой на путь. Делим длину пути на скорость
-    t = l / planets_data[name]["speed"]
+    if name == "Earth":
+        orbital_period_seconds = DAYS_IN_YEAR * SECONDS_IN_DAY
+        angular_velocity = 2 * 3.141592653589793 / orbital_period_seconds
+        newAngle = angle - angular_velocity * DELAY * sim_time_speed
+    else:
+        angular_velocity = planets_data[name]["speed"] / h
+        newAngle = angle - angular_velocity * DELAY * sim_time_speed / h
 
 
     # Рассчитываем новые координаты
@@ -57,6 +60,4 @@ def UpdatePlanetPosition(planets, name, sim_time_speed):
     planet.setheading(newAngle)
     planet.goto(new_x, new_y)
 
-    # Возвращаем время
-    return t
 
