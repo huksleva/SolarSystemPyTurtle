@@ -9,6 +9,11 @@ def MonitorFrameRate():
     devmode = win32api.EnumDisplaySettings(None, win32con.ENUM_CURRENT_SETTINGS)
     return devmode.DisplayFrequency
 
+def MonitorResolution():
+    # Получаем размеры экрана
+    width = win32api.GetSystemMetrics(0)
+    height = win32api.GetSystemMetrics(1)
+    return width, height
 
 # Частота кадров и время на один кадр
 FPS = MonitorFrameRate()  # Например, 60 Гц
@@ -59,5 +64,4 @@ def UpdatePlanetPosition(planets, name, sim_time_speed):
     # Обновляем направление и позицию
     planet.setheading(newAngle)
     planet.goto(new_x, new_y)
-
 
