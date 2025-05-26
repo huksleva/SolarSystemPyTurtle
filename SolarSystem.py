@@ -1,11 +1,10 @@
-import turtle
 from Methods import *
 from datetime import datetime, timedelta
 
 
 
 # Настройка экрана
-screen = turtle.Screen()
+screen = Screen()
 screen.bgcolor("black")
 screen.setup(MonitorResolution()[0], MonitorResolution()[1], 0, 0)
 screen.title("Симуляция Солнечной системы")
@@ -24,7 +23,7 @@ sim_days = 0.0 # Начальное время симуляции в днях
 
 
 # Черепашка для отображения времени
-time_display = turtle.Turtle()
+time_display = Turtle()
 time_display.hideturtle()
 time_display.penup()
 time_display.color("white")
@@ -46,26 +45,38 @@ bigger_size = 9e-8
 
 
 
-# Выстраиваем парад планет
+# === Создание объектов планет ===
 planets = {}
 for name, data in planets_data.items():
-    planet = turtle.Turtle()
+    planet = Turtle()
     planet.shape("circle")
     planet.color(data["color"])
     planet.penup()
     planet.speed(0)
 
-    # Устанавливаем размер относительно радиуса
-    planet.shapesize(data["radius"] * bigger_size)  # Для наглядности
+    # Устанавливаем размер относительно радиуса (увеличенный для наглядности)
+    planet.shapesize(data["radius"] * bigger_size)
 
-    # Уменьшаем начальное расстояние
+    # Уменьшаем начальное расстояние от Солнца для отображения
     start_distance = data["distanceFromSun"] / smaller_dist
 
-    # Начинаем планету под углом 0 градусов (по оси X)
+    # Начальная позиция — справа от Солнца (по оси X)
     planet.goto(start_distance, 0)
-    planet.setheading(90)  # Поворачиваем черепашку вверх (движение будет против часовой)
+    planet.setheading(90)  # Движение против часовой стрелки
+
+    # Сохраняем объект планеты
     planets[name] = planet
-    print("Создан объект:", name)
+
+    # === Инициализация начальной скорости ===
+    if name != "Sun":
+        x = start_distance
+        y = 0
+        # Перпендикуляр к радиус-вектору — тангенциальная скорость
+        initial_velocity = Vec2D(-y, x)  # направление движения против часовой
+        initial_velocity = normalize_vector(initial_velocity) * data["speed"]
+        planet.velocity = initial_velocity
+
+    print(f"Создан объект: {name}")
 
 # Обработка нажатий клавиш
 def increase_time_speed():
@@ -92,7 +103,7 @@ screen.listen()
 
 # Начинаем движение
 def Update():
-    global sim_start_date, last_update_time, paused
+    global sim_start_date, last_update_time, paused, sim_start_seconds
 
     screen.update()
 
@@ -109,12 +120,13 @@ def Update():
 
         # === Обновляем дату симуляции ===
         sim_start_date += timedelta(seconds=delta_sim_seconds)
+        sim_start_seconds += delta_sim_seconds
         last_update_time = current_real_time
 
         # === Обновляем позиции планет ===
         for name in planets:
             if name != "Sun":
-                UpdatePlanetPosition(planets, name, sim_time_speed / SlowPlanet)
+                UpdatePlanetPosition(planets, name, delta_sim_seconds)
 
     # === Очищаем предыдущий текст ===
     time_display.clear()
@@ -139,7 +151,7 @@ def Update():
 # Запуск анимации
 Update()
 
-turtle.mainloop()
+screen.mainloop()
 
 
 
