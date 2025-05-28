@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 
 # Настройка экрана
-screen = Screen()
+screen = turtle.Screen()
 screen.bgcolor("black")
 screen.setup(MonitorResolution()[0], MonitorResolution()[1], 0, 0)
 screen.title("Симуляция Солнечной системы")
@@ -23,7 +23,7 @@ sim_days = 0.0 # Начальное время симуляции в днях
 
 
 # Черепашка для отображения времени
-time_display = Turtle()
+time_display = turtle.Turtle()
 time_display.hideturtle()
 time_display.penup()
 time_display.color("white")
@@ -48,7 +48,7 @@ bigger_size = 9e-8
 # === Создание объектов планет ===
 planets = {}
 for name, data in planets_data.items():
-    planet = Turtle()
+    planet = turtle.Turtle()
     planet.shape("circle")
     planet.color(data["color"])
     planet.penup()
@@ -72,8 +72,15 @@ for name, data in planets_data.items():
         x = start_distance
         y = 0
         # Перпендикуляр к радиус-вектору — тангенциальная скорость
-        initial_velocity = Vec2D(-y, x)  # направление движения против часовой
-        initial_velocity = normalize_vector(initial_velocity) * data["speed"]
+        initial_velocity = turtle.Vec2D(-y, x)  # направление движения против часовой
+
+        # Нормализуем и масштабируем
+        initial_velocity = normalize_vector(initial_velocity)
+        initial_velocity = turtle.Vec2D(
+            initial_velocity[0] * data["speed"],
+            initial_velocity[1] * data["speed"]
+        )
+
         planet.velocity = initial_velocity
 
     print(f"Создан объект: {name}")

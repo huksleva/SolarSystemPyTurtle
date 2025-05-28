@@ -21,35 +21,35 @@ DELAY = 1 / FPS  # ~0.0167 секунд на кадр
 
 
 def normalize_vector(v):
-    length = abs(v)  # Vec2D поддерживает abs() как длину вектора
+    length = abs(v)  # длина Vec2D
     if length == 0:
-        return Vec2D(0, 0)
-    return v / length
+        return turtle.Vec2D(0.0, 0.0)
+    return turtle.Vec2D(v[0] / length, v[1] / length)
 
 
 
 def UpdatePlanetPosition(planets, name, time_step):
     """
     Обновляет положение планеты на основе гравитационного ускорения.
-    time_step — шаг времени в секундах (обычно DELAY * sim_time_speed)
+    time_step — шаг времени в секундах
     """
 
     if name == "Sun":
-        return  # Солнце не двигаем
+        return
 
     planet = planets[name]
-    pos = Vec2D(planet.xcor(), planet.ycor())
-    vel = getattr(planet, 'velocity', Vec2D(0, 0))  # Получаем или инициализируем скорость
+    pos = turtle.Vec2D(planet.xcor(), planet.ycor())
+    vel = getattr(planet, 'velocity', turtle.Vec2D(0, 0))  # Получаем или инициализируем скорость
 
     # Расстояние до Солнца
-    r_vec = SUN_POS - pos
+    r_vec = turtle.Vec2D(0, 0) - pos  # Вектор от планеты к Солнцу
     r_mag = abs(r_vec)
 
     if r_mag == 0:
-        return  # Защита от деления на 0
+        return  # Защита от деления на ноль
 
-    # Направление силы (нормализованный вектор)
-    r_hat = r_vec / r_mag
+    # Нормализованный вектор направления силы тяжести
+    r_hat = turtle.Vec2D(r_vec[0] / r_mag, r_vec[1] / r_mag)
 
     # Ускорение по закону всемирного тяготения
     acceleration = G * SUN_MASS / (r_mag ** 2) * r_hat

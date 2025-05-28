@@ -1,4 +1,4 @@
-from turtle import *
+import turtle
 
 
 
@@ -112,7 +112,7 @@ planets_data = {
 
 # Центр масс (Солнце)
 SUN_MASS = planets_data["Sun"]["mass"]
-SUN_POS = Vec2D(0, 0)  # Предположим, что Солнце статично в центре
+SUN_POS = turtle.Vec2D(0, 0)  # Предположим, что Солнце статично в центре
 
 
 
