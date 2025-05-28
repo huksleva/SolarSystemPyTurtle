@@ -1,3 +1,4 @@
+import turtle
 from Methods import *
 from datetime import datetime, timedelta
 
@@ -45,7 +46,7 @@ bigger_size = 9e-8
 
 
 
-# === Создание объектов планет ===
+# Выстраиваем парад планет
 planets = {}
 for name, data in planets_data.items():
     planet = turtle.Turtle()
@@ -54,36 +55,17 @@ for name, data in planets_data.items():
     planet.penup()
     planet.speed(0)
 
-    # Устанавливаем размер относительно радиуса (увеличенный для наглядности)
-    planet.shapesize(data["radius"] * bigger_size)
+    # Устанавливаем размер относительно радиуса
+    planet.shapesize(data["radius"] * bigger_size)  # Для наглядности
 
-    # Уменьшаем начальное расстояние от Солнца для отображения
+    # Уменьшаем начальное расстояние
     start_distance = data["distanceFromSun"] / smaller_dist
 
-    # Начальная позиция — справа от Солнца (по оси X)
+    # Начинаем планету под углом 0 градусов (по оси X)
     planet.goto(start_distance, 0)
-    planet.setheading(90)  # Движение против часовой стрелки
-
-    # Сохраняем объект планеты
+    planet.setheading(90)  # Поворачиваем черепашку вверх (движение будет против часовой)
     planets[name] = planet
-
-    # === Инициализация начальной скорости ===
-    if name != "Sun":
-        x = start_distance
-        y = 0
-        # Перпендикуляр к радиус-вектору — тангенциальная скорость
-        initial_velocity = turtle.Vec2D(-y, x)  # направление движения против часовой
-
-        # Нормализуем и масштабируем
-        initial_velocity = normalize_vector(initial_velocity)
-        initial_velocity = turtle.Vec2D(
-            initial_velocity[0] * data["speed"],
-            initial_velocity[1] * data["speed"]
-        )
-
-        planet.velocity = initial_velocity
-
-    print(f"Создан объект: {name}")
+    print("Создан объект:", name)
 
 # Обработка нажатий клавиш
 def increase_time_speed():
@@ -110,7 +92,7 @@ screen.listen()
 
 # Начинаем движение
 def Update():
-    global sim_start_date, last_update_time, paused, sim_start_seconds
+    global sim_start_date, last_update_time, paused
 
     screen.update()
 
@@ -127,13 +109,12 @@ def Update():
 
         # === Обновляем дату симуляции ===
         sim_start_date += timedelta(seconds=delta_sim_seconds)
-        sim_start_seconds += delta_sim_seconds
         last_update_time = current_real_time
 
         # === Обновляем позиции планет ===
         for name in planets:
             if name != "Sun":
-                UpdatePlanetPosition(planets, name, delta_sim_seconds)
+                UpdatePlanetPosition(planets, name, sim_time_speed / SlowPlanet)
 
     # === Очищаем предыдущий текст ===
     time_display.clear()
@@ -158,7 +139,7 @@ def Update():
 # Запуск анимации
 Update()
 
-screen.mainloop()
+turtle.mainloop()
 
 
 

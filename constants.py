@@ -1,6 +1,3 @@
-import turtle
-
-
 
 # Гравитационная постоянная. Данные взяты из статьи журнала Nature: https://www.nature.com/articles/s41586-018-0431-5
 # G = const
@@ -107,13 +104,6 @@ planets_data = {
         "orbitalPeriod": 5202620160
     }
 }
-
-
-
-# Центр масс (Солнце)
-SUN_MASS = planets_data["Sun"]["mass"]
-SUN_POS = turtle.Vec2D(0, 0)  # Предположим, что Солнце статично в центре
-
 
 
 
