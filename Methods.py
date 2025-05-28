@@ -24,9 +24,19 @@ DELAY = 1 / FPS  # ~0.0167 секунд на кадр
 
 # Функция возвращает новую позицию планеты относительно Солнца.
 # Возвращает время, прошедшее внутри симуляции в секундах, за которое планета прошла один тик.
+
+# Допиши код так, чтобы Часы симуляции должны точно выводить время, то есть Земля, например,
+# должна совершить оборот вокруг Солнца ровно за один год. Ещё не должно быть такого, что через, например,
+# 10000 лет Земля будет совершать оборот не ровно за год.
+
+
+
+
+
 def UpdatePlanetPosition(planets, name, sim_time_speed):
     # Обновляет координаты планеты name вокруг Солнца.
     # Предполагаем круговые орбиты.
+
 
     planet = planets[name]
 
@@ -48,13 +58,9 @@ def UpdatePlanetPosition(planets, name, sim_time_speed):
     angle -= angular_speed * DELAY * sim_time_speed / h
 
 
-    if name == "Earth":
-        orbital_period_seconds = DAYS_IN_YEAR * SECONDS_IN_DAY
-        angular_velocity = 2 * 3.141592653589793 / orbital_period_seconds
-        newAngle = angle - angular_velocity * DELAY * sim_time_speed
-    else:
-        angular_velocity = planets_data[name]["speed"] / h
-        newAngle = angle - angular_velocity * DELAY * sim_time_speed / h
+
+    angular_velocity = planets_data[name]["speed"] / h
+    newAngle = angle - angular_velocity * DELAY * sim_time_speed / h
 
 
     # Рассчитываем новые координаты
@@ -64,4 +70,16 @@ def UpdatePlanetPosition(planets, name, sim_time_speed):
     # Обновляем направление и позицию
     planet.setheading(newAngle)
     planet.goto(new_x, new_y)
+
+
+
+
+# Обновляет позицию подписи
+def UpdateLabelPosition(name, planets_labels, planets):
+    planets_labels[name].clear()
+    planets_labels[name].goto(planets[name].xcor(), planets[name].ycor() + 17)
+    planets_labels[name].write(name, align="center", font=("Courier", 10, "bold"))
+
+
+
 

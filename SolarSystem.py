@@ -9,7 +9,7 @@ screen = turtle.Screen()
 screen.bgcolor("black")
 screen.setup(MonitorResolution()[0], MonitorResolution()[1], 0, 0)
 screen.title("Симуляция Солнечной системы")
-#screen.bgpic("stars.png")
+screen.bgpic("stars2.png")
 screen.tracer(0)
 
 
@@ -48,6 +48,7 @@ bigger_size = 9e-8
 
 # Выстраиваем парад планет
 planets = {}
+planets_labels = {}
 for name, data in planets_data.items():
     planet = turtle.Turtle()
     planet.shape("circle")
@@ -65,6 +66,21 @@ for name, data in planets_data.items():
     planet.goto(start_distance, 0)
     planet.setheading(90)  # Поворачиваем черепашку вверх (движение будет против часовой)
     planets[name] = planet
+
+
+    # Создаем подпись планеты
+    label = turtle.Turtle()
+    label.hideturtle()
+    label.color("white")
+    label.penup()
+    label.speed(0)
+    label.write(name, align="center", font=("Courier", 10, "normal"))
+    label.goto(start_distance, 0)
+    planets_labels[name] = label
+
+
+
+
     print("Создан объект:", name)
 
 # Обработка нажатий клавиш
@@ -111,10 +127,15 @@ def Update():
         sim_start_date += timedelta(seconds=delta_sim_seconds)
         last_update_time = current_real_time
 
-        # === Обновляем позиции планет ===
+        # === Обновляем позиции планет и их подписей ===
         for name in planets:
             if name != "Sun":
                 UpdatePlanetPosition(planets, name, sim_time_speed / SlowPlanet)
+                UpdateLabelPosition(name, planets_labels, planets)
+
+
+
+
 
     # === Очищаем предыдущий текст ===
     time_display.clear()
