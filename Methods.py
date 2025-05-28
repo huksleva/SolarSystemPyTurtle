@@ -1,5 +1,6 @@
 import win32api
 import win32con
+from math import sqrt, sin, cos
 from constants import *
 
 
@@ -20,44 +21,47 @@ DELAY = 1 / FPS  # ~0.0167 секунд на кадр
 
 
 
-def normalize_vector(v):
-    length = abs(v)  # длина Vec2D
-    if length == 0:
-        return turtle.Vec2D(0.0, 0.0)
-    return turtle.Vec2D(v[0] / length, v[1] / length)
 
-
-
-def UpdatePlanetPosition(planets, name, time_step):
-    """
-    Обновляет положение планеты на основе гравитационного ускорения.
-    time_step — шаг времени в секундах
-    """
-
-    if name == "Sun":
-        return
+# Функция возвращает новую позицию планеты относительно Солнца.
+# Возвращает время, прошедшее внутри симуляции в секундах, за которое планета прошла один тик.
+def UpdatePlanetPosition(planets, name, sim_time_speed):
+    # Обновляет координаты планеты name вокруг Солнца.
+    # Предполагаем круговые орбиты.
 
     planet = planets[name]
-    pos = turtle.Vec2D(planet.xcor(), planet.ycor())
-    vel = getattr(planet, 'velocity', turtle.Vec2D(0, 0))  # Получаем или инициализируем скорость
 
-    # Расстояние до Солнца
-    r_vec = turtle.Vec2D(0, 0) - pos  # Вектор от планеты к Солнцу
-    r_mag = abs(r_vec)
+    x = planet.xcor()
+    y = planet.ycor()
 
-    if r_mag == 0:
-        return  # Защита от деления на ноль
+    # Расстояние до центрального тела.
+    h = sqrt(x ** 2 + y ** 2)
 
-    # Нормализованный вектор направления силы тяжести
-    r_hat = turtle.Vec2D(r_vec[0] / r_mag, r_vec[1] / r_mag)
+    # Вычисляем угол текущего положения в радианах
+    # Направление черепашки — это угол
+    angle = planet.heading()
 
-    # Ускорение по закону всемирного тяготения
-    acceleration = G * SUN_MASS / (r_mag ** 2) * r_hat
+    # Угловая скорость: v / r
+    angular_speed = planets_data[name]["speed"] / h
 
-    # Интегрируем ускорение для получения скорости и координат
-    vel += acceleration * time_step
-    new_pos = pos + vel * time_step
+    # Обновляем угол.
+    # Минус для вращения против часовой стрелки
+    angle -= angular_speed * DELAY * sim_time_speed / h
 
-    # Сохраняем новую скорость как атрибут черепашки
-    planet.velocity = vel
-    planet.goto(new_pos)
+
+    if name == "Earth":
+        orbital_period_seconds = DAYS_IN_YEAR * SECONDS_IN_DAY
+        angular_velocity = 2 * 3.141592653589793 / orbital_period_seconds
+        newAngle = angle - angular_velocity * DELAY * sim_time_speed
+    else:
+        angular_velocity = planets_data[name]["speed"] / h
+        newAngle = angle - angular_velocity * DELAY * sim_time_speed / h
+
+
+    # Рассчитываем новые координаты
+    new_x = h * cos(newAngle)
+    new_y = h * sin(newAngle)
+
+    # Обновляем направление и позицию
+    planet.setheading(newAngle)
+    planet.goto(new_x, new_y)
+
