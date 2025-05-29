@@ -14,12 +14,7 @@ screen.tracer(0)
 
 
 
-# === Время внутри симуляции ===
-simulationTime = datetime(year=2025, month=1, day=1, hour=0, minute=0, second=0)
-sim_time_speed = 1.0  # x1 — скорость времени (можно менять через клавиши)
-paused = False        # Флаг паузы
-last_update_time = None  # Время последнего обновления для учёта реального времени
-sim_days = 0.0 # Начальное время симуляции в днях
+
 
 
 
@@ -53,22 +48,24 @@ for name, data in planets_data.items():
     planet = turtle.Turtle()
     planet.shape("circle")
     planet.color(data["color"])
-    #planet.penup()
+    planet.penup()
     planet.speed(0)
 
-    # Устанавливаем размер относительно радиуса
-    planet.shapesize(data["radius"] * planets_data_multipliers[name]["radius"] * bigger_size)  # Для наглядности
+    # Радиус
+    radius = data["radius"] * planets_data_multipliers[name]["radius"]
+    planet.shapesize(radius)
 
-    # Уменьшаем начальное расстояние
-    start_distance = data["distanceFromSun"] * planets_data_multipliers[name]["distanceFromSun"] * smaller_dist
+    # Расстояние до Солнца
+    start_distance = data["distanceFromSun"] * planets_data_multipliers[name]["distanceFromSun"]
 
-    # Начинаем планету под углом 0 градусов (по оси X)
+    # Начинаем, планета под углом 0 градусов (по оси X)
     planet.goto(start_distance, 0)
-    planet.setheading(90)  # Поворачиваем черепашку вверх (движение будет против часовой)
     planets[name] = planet
 
 
     # Создаем подпись планеты
+    if name == "Sun":
+        continue
     label = turtle.Turtle()
     label.hideturtle()
     label.color("white")
@@ -77,6 +74,15 @@ for name, data in planets_data.items():
     label.write(name, align="center", font=("Courier", 10, "normal"))
     label.goto(start_distance, 0)
     planets_labels[name] = label
+
+
+
+# === Время внутри симуляции ===
+sim_time_speed = 1.0  # x1 — скорость симуляции (можно менять через клавиши)
+is_paused = False        # Флаг паузы
+is_showOrbits = False    # Флаг показа орбит
+last_update_time = None  # Время последнего обновления для учёта реального времени
+sim_seconds = 0 # Время внутри симуляции в секундах
 
 
 
@@ -90,24 +96,45 @@ def decrease_time_speed():
     sim_time_speed /= 1.5
 
 def toggle_pause():
-    global paused
-    paused = not paused
+    global is_paused
+    is_paused = not is_paused
+
+def restart():
+    global is_paused, sim_seconds
+    is_paused = False
+    sim_seconds = 0
+
+def showOrbits():
+    global is_showOrbits
+    # Если орбиты показаны, то скрываем их, иначе показываем
+    if is_showOrbits:
+        is_showOrbits = False
+        for name in planets:
+            planets[name].penup()
+            planets[name].clear()
+    else:
+        is_showOrbits = True
+        for name in planets:
+            planets[name].pendown()
+
 
 
 # Привязка клавиш
 screen.onkeypress(increase_time_speed, "Up")
 screen.onkeypress(decrease_time_speed, "Down")
 screen.onkeypress(toggle_pause, "space")
+screen.onkeypress(restart, "r")
+screen.onkeypress(showOrbits, "o")
 screen.listen()
 
 
 # Начинаем движение
 def Update():
-    global simulationTime, last_update_time, paused
+    global last_update_time, is_paused, sim_seconds
 
     screen.update()
 
-    if not paused:
+    if not is_paused:
         current_real_time = datetime.now()
 
         if last_update_time is None:
@@ -118,17 +145,14 @@ def Update():
         delta_real = (current_real_time - last_update_time).total_seconds()
         delta_sim_seconds = delta_real * sim_time_speed
 
-        # === Обновляем дату симуляции ===
-        simulationTime += timedelta(seconds=delta_sim_seconds)
-        last_update_time = current_real_time
+        # === Обновляем время симуляции в секундах ===
+        sim_seconds += delta_sim_seconds
 
         # === Обновляем позиции планет и их подписей ===
         for name in planets:
             if name != "Sun":
-                UpdatePlanetPosition(planets, name, sim_time_speed / SlowPlanet)
+                UpdatePlanetPos(planets, name, sim_seconds)
                 UpdateLabelPosition(name, planets_labels, planets)
-
-
 
 
 
@@ -137,11 +161,17 @@ def Update():
 
 
     # === Формируем текущее время из simulationTime ===
-    status = "Пауза" if paused else f"Скорость: x{sim_time_speed:.2f}"
-
+    status = "Пауза" if is_paused else f"Скорость: x{sim_time_speed:.2f}"
     time_display.goto(-950, 500)
+
+
+
+
+
+
+
     time_display.write(
-        f"Время: {simulationTime.strftime('%Y-%m-%d %H:%M:%S')}   {status}",
+        f"Время:    {status}",
         align="left",
         font=("Courier", 16, "normal")
     )

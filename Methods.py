@@ -1,6 +1,6 @@
 import win32api
 import win32con
-from math import sqrt, sin, cos
+from math import sqrt, sin, cos, pi
 from constants import *
 
 
@@ -23,67 +23,24 @@ DELAY = 1 / FPS  # ~0.0167 секунд на кадр
 
 
 # Функция возвращает новую позицию планеты относительно Солнца.
-# Возвращает время, прошедшее внутри симуляции в секундах, за которое планета прошла один тик.
 
-# Допиши код так, чтобы Часы симуляции должны точно выводить время, то есть Земля, например,
-# должна совершить оборот вокруг Солнца ровно за один год. Ещё не должно быть такого, что через, например,
-# 10000 лет Земля будет совершать оборот не ровно за год.
-
-
-
-def UpdatePlanetPos(planets, name, t):
+def UpdatePlanetPos(planets, name, total_sim_seconds):
     planet = planets[name]
-    v = planets_data[name]["speed"]
-    r = planets_data[name]["distanceFromSun"]
 
-    x = r * cos(t * v / r)
-    y = r * sin(t * v / r)
+
+    # Получаем параметры планеты
+    r = planets_data[name]["distanceFromSun"]
+    period = planets_data[name]["orbitalPeriod"]
+
+    # Угол в радианах: θ = 2π * (t / T)
+    angle = 2 * pi * (total_sim_seconds % period) / period
+
+    # Рассчитываем координаты
+    scale = planets_data_multipliers[name]["distanceFromSun"]
+    x = r * cos(angle) * scale
+    y = r * sin(angle) * scale
 
     planet.goto(x, y)
-
-def UpdatePlanetPosition(planets, name, sim_time_speed):
-    # Обновляет координаты планеты name вокруг Солнца.
-    # Предполагаем круговые орбиты.
-
-
-    planet = planets[name]
-
-    x = planet.xcor()
-    y = planet.ycor()
-
-    # Расстояние до центрального тела.
-    h = sqrt(x ** 2 + y ** 2)
-
-    # Вычисляем угол текущего положения в радианах
-    # Направление черепашки — это угол
-    angle = planet.heading()
-
-    # Угловая скорость: v / r
-    angular_speed = planets_data[name]["speed"] / h
-
-    # Обновляем угол.
-    # Минус для вращения против часовой стрелки
-    angle -= angular_speed * DELAY * sim_time_speed / h
-
-
-
-    angular_velocity = planets_data[name]["speed"] / h
-    newAngle = angle - angular_velocity * DELAY * sim_time_speed / h
-
-
-    # Рассчитываем новые координаты
-    new_x = h * cos(newAngle)
-    new_y = h * sin(newAngle)
-
-    # Обновляем направление и позицию
-    planet.setheading(newAngle)
-    planet.goto(new_x, new_y)
-
-
-
-    # Вычисляем время, прошедшее внутри симуляции в секундах, за которое планета прошла один тик.
-    #t = abs(newAngle - angle) * angular_speed
-    #return t
 
 
 

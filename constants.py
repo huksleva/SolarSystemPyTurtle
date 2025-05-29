@@ -106,7 +106,7 @@ planets_data = {
 
 
 # Множители масштаба всей симуляции, подгонял вручную.
-smaller_dist = 4e-9
+smaller_dist = 1 / 4e9
 bigger_size = 9e-8
 
 # Числа, множители для значений свойств объектов в planets_data.
@@ -114,40 +114,40 @@ bigger_size = 9e-8
 
 planets_data_multipliers = {
     "Sun": {
-        "radius": 1 / 25,
+        "radius": 1 / 25 * bigger_size,
         "distanceFromSun": 1,
     },
     "Mercurian": {
-        "radius": 3,
-        "distanceFromSun": 3,
+        "radius": 3 * bigger_size,
+        "distanceFromSun": 3 * smaller_dist,
     },
     "Venus": {
-        "radius": 1.8,
-        "distanceFromSun": 3,
+        "radius": 1.8 * bigger_size,
+        "distanceFromSun": 3 * smaller_dist,
     },
     "Earth": {
-        "radius": 2,
-        "distanceFromSun": 3.5,
+        "radius": 2 * bigger_size,
+        "distanceFromSun": 3.5 * smaller_dist,
     },
     "Mars": {
-        "radius": 2.5,
-        "distanceFromSun": 3.5,
+        "radius": 2.5 * bigger_size,
+        "distanceFromSun": 3.5 * smaller_dist,
     },
     "Jupiter": {
-        "radius": 1 / 4,
-        "distanceFromSun": 1.5,
+        "radius": 1 / 4 * bigger_size,
+        "distanceFromSun": 1.5 * smaller_dist,
     },
     "Saturn": {
-        "radius": 1 / 4,
-        "distanceFromSun": 1,
+        "radius": 1 / 4 * bigger_size,
+        "distanceFromSun": 1 * smaller_dist,
     },
     "Uranus": {
-        "radius": 1 / 2.5,
-        "distanceFromSun": 1 / 1.8,
+        "radius": 1 / 2.5 * bigger_size,
+        "distanceFromSun": 1 / 1.8 * smaller_dist,
     },
     "Neptune": {
-        "radius": 1 / 2.5,
-        "distanceFromSun": 1 / 2.5,
+        "radius": 1 / 2.5 * bigger_size,
+        "distanceFromSun": 1 / 2.5 * smaller_dist,
     }
 }
 
