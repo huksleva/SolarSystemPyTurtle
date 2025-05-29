@@ -31,7 +31,15 @@ DELAY = 1 / FPS  # ~0.0167 секунд на кадр
 
 
 
+def UpdatePlanetPos(planets, name, t):
+    planet = planets[name]
+    v = planets_data[name]["speed"]
+    r = planets_data[name]["distanceFromSun"]
 
+    x = r * cos(t * v / r)
+    y = r * sin(t * v / r)
+
+    planet.goto(x, y)
 
 def UpdatePlanetPosition(planets, name, sim_time_speed):
     # Обновляет координаты планеты name вокруг Солнца.
@@ -73,13 +81,18 @@ def UpdatePlanetPosition(planets, name, sim_time_speed):
 
 
 
+    # Вычисляем время, прошедшее внутри симуляции в секундах, за которое планета прошла один тик.
+    #t = abs(newAngle - angle) * angular_speed
+    #return t
+
+
+
 
 # Обновляет позицию подписи
 def UpdateLabelPosition(name, planets_labels, planets):
     planets_labels[name].clear()
     planets_labels[name].goto(planets[name].xcor(), planets[name].ycor() + 17)
     planets_labels[name].write(name, align="center", font=("Courier", 10, "bold"))
-
 
 
 

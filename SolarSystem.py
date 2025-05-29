@@ -15,7 +15,7 @@ screen.tracer(0)
 
 
 # === Время внутри симуляции ===
-sim_start_date = datetime(year=2025, month=1, day=1, hour=0, minute=0, second=0)
+simulationTime = datetime(year=2025, month=1, day=1, hour=0, minute=0, second=0)
 sim_time_speed = 1.0  # x1 — скорость времени (можно менять через клавиши)
 paused = False        # Флаг паузы
 last_update_time = None  # Время последнего обновления для учёта реального времени
@@ -53,14 +53,14 @@ for name, data in planets_data.items():
     planet = turtle.Turtle()
     planet.shape("circle")
     planet.color(data["color"])
-    planet.penup()
+    #planet.penup()
     planet.speed(0)
 
     # Устанавливаем размер относительно радиуса
-    planet.shapesize(data["radius"] * bigger_size)  # Для наглядности
+    planet.shapesize(data["radius"] * planets_data_multipliers[name]["radius"] * bigger_size)  # Для наглядности
 
     # Уменьшаем начальное расстояние
-    start_distance = data["distanceFromSun"] / smaller_dist
+    start_distance = data["distanceFromSun"] * planets_data_multipliers[name]["distanceFromSun"] * smaller_dist
 
     # Начинаем планету под углом 0 градусов (по оси X)
     planet.goto(start_distance, 0)
@@ -80,24 +80,19 @@ for name, data in planets_data.items():
 
 
 
-
-    print("Создан объект:", name)
-
 # Обработка нажатий клавиш
 def increase_time_speed():
     global sim_time_speed
     sim_time_speed *= 1.5
-    print(f"[Ускорение времени] x{sim_time_speed:.4f}")
 
 def decrease_time_speed():
     global sim_time_speed
     sim_time_speed /= 1.5
-    print(f"[Замедление времени] x{sim_time_speed:.4f}")
 
 def toggle_pause():
     global paused
     paused = not paused
-    print("[Пауза]" if paused else "[Продолжить]")
+
 
 # Привязка клавиш
 screen.onkeypress(increase_time_speed, "Up")
@@ -108,7 +103,7 @@ screen.listen()
 
 # Начинаем движение
 def Update():
-    global sim_start_date, last_update_time, paused
+    global simulationTime, last_update_time, paused
 
     screen.update()
 
@@ -124,7 +119,7 @@ def Update():
         delta_sim_seconds = delta_real * sim_time_speed
 
         # === Обновляем дату симуляции ===
-        sim_start_date += timedelta(seconds=delta_sim_seconds)
+        simulationTime += timedelta(seconds=delta_sim_seconds)
         last_update_time = current_real_time
 
         # === Обновляем позиции планет и их подписей ===
@@ -140,13 +135,13 @@ def Update():
     # === Очищаем предыдущий текст ===
     time_display.clear()
 
-    # === Формируем текущее время из sim_start_date ===
-    dt = sim_start_date
+
+    # === Формируем текущее время из simulationTime ===
     status = "Пауза" if paused else f"Скорость: x{sim_time_speed:.2f}"
 
     time_display.goto(-950, 500)
     time_display.write(
-        f"Время: {dt.strftime('%Y-%m-%d %H:%M:%S')}   {status}",
+        f"Время: {simulationTime.strftime('%Y-%m-%d %H:%M:%S')}   {status}",
         align="left",
         font=("Courier", 16, "normal")
     )
