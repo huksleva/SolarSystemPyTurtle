@@ -49,12 +49,11 @@
 pip install pywin32
 ```
 
-Если у вас не установлен `turtle`, выполните:
+Если у вас не установлен `datetime`, выполните:
 
 ```bash
-pip install turtle
+pip install datetime
 ```
-
 
 
 ### Запуск программы
