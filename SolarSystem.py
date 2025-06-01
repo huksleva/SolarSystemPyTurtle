@@ -9,7 +9,7 @@ screen = turtle.Screen()
 screen.bgcolor("black")
 screen.setup(MonitorResolution()[0], MonitorResolution()[1], 0, 0)
 screen.title("Симуляция Солнечной системы")
-screen.bgpic("stars2.png")
+screen.bgpic("stars.png")
 screen.tracer(0)
 
 
@@ -110,7 +110,7 @@ screen.listen()
 
 # Начинаем движение
 def Update():
-    global last_update_time, is_paused, sim_seconds, years
+    global last_update_time, is_paused, sim_seconds
 
     screen.update()
 
@@ -143,22 +143,27 @@ def Update():
 
 
 
-    # === Формируем текущее состояние ===
-    status = "Пауза" if is_paused else f"Скорость: x{sim_time_speed:.2f}"
+    # === Формируем текущую строку состояния ===
+    if is_paused:
+        status = "Пауза"
+        seconds = "SS"
+        minutes = "MM"
+        hours = "HH"
+        days = "DDD"
+        years = "YYYY"
+    else:
+        status = f"Скорость: x{sim_time_speed:.2f}"
+        seconds = int(sim_seconds % 60)
+        minutes = int(sim_seconds / 60 % 60)
+        hours = int(sim_seconds / 60 / 60 % 24)
+        days = int(sim_seconds / 60 / 60 / 24 % (planets_data["Earth"]["orbitalPeriod"] / 60 / 60 / 24))
+        years = int(sim_seconds / planets_data["Earth"]["orbitalPeriod"])
 
 
 
     # === Выводим текущее время внутри симуляции ===
-
-    minutes = int(sim_seconds / 60 % 60)
-    hours = int(sim_seconds / 60 / 60 % 24)
-    days = int(sim_seconds / 60 / 60 / 24 % (planets_data["Earth"]["orbitalPeriod"] / 60 / 60 / 24))
-    years = int(sim_seconds / planets_data["Earth"]["orbitalPeriod"])
-
-
-
     time_display.write(
-        f"Время: {years} год:{days:3d}:{hours:2d}:{minutes:2d}:{int(sim_seconds % 60):2d}    {status}    Показать орбиты: {not is_showOrbits}",
+        f"Время: {years:4}:{days:3}:{hours:2}:{minutes:2}:{seconds:2}    {status}",
         align="left",
         font=("Courier", 16, "normal")
     )

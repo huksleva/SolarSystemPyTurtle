@@ -1,6 +1,6 @@
 import win32api
 import win32con
-from math import sqrt, sin, cos, pi
+from math import sin, cos, pi
 from constants import *
 
 
@@ -22,8 +22,7 @@ DELAY = 1 / FPS  # ~0.0167 секунд на кадр
 
 
 
-# Функция возвращает новую позицию планеты относительно Солнца.
-
+# Функция возвращает новую позицию планеты
 def UpdatePlanetPos(planets, name, total_sim_seconds):
     planet = planets[name]
 
@@ -55,7 +54,9 @@ def UpdateLabelPosition(name, planets_labels, planets):
 def DrawOrbits(planets):
     for name in planets:
         planet = planets[name]
-
+        start_x = planet.xcor()
+        start_y = planet.ycor()
+        planet.hideturtle()
         scale = planets_data_multipliers[name]["distanceFromSun"]
         r = planets_data[name]["distanceFromSun"]
         for angle in range(361):
@@ -64,6 +65,9 @@ def DrawOrbits(planets):
             planet.goto(x, y)
             planet.pendown()
         planet.penup()
+        planet.goto(start_x, start_y)
+        planet.showturtle()
+
 
 def ClearOrbits(planets):
     for name in planets:
