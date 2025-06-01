@@ -3,19 +3,6 @@
 # G = const
 G = 6.674334e-11
 
-# Константы времени
-SECONDS_IN_DAY = 86400
-DAYS_IN_YEAR = 365.25  # Учёт високосных годов
-YEARS_IN_CENTURY = 100
-WEEKS_IN_YEAR = 52
-DAYS_IN_WEEK = 7
-MONTHS_IN_YEAR = 12
-
-
-
-
-
-
 
 
 # Данные взяты с сайта NASA. Все значения представлены в СИ. Все значения = const.
