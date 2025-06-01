@@ -14,24 +14,12 @@ screen.tracer(0)
 
 
 
-
-
-
-
 # Черепашка для отображения времени
 time_display = turtle.Turtle()
 time_display.hideturtle()
 time_display.penup()
 time_display.color("white")
-time_display.goto(0, 0)  # Под текущим текстом
-
-sim_start_seconds = 0  # Счётчик секунд внутри симуляции. Начинаем от нуля.
-SlowPlanet = 20    # Во сколько раз замедлится движение планет
-
-
-# Размер планет в масштабе относительно Солнца умноженный на 100, то есть все планеты больше в 100 раз,
-# чем должны быть (на физические расчёты не влияет). То есть, если изменить размер Солнца, то поменяются
-# размеры и других планет. Тем, что есть радиус экваториальный, а есть полюсный принебрёг.
+time_display.goto(0, 0)
 
 
 
@@ -53,7 +41,7 @@ for name, data in planets_data.items():
     # Расстояние до Солнца
     start_distance = data["distanceFromSun"] * planets_data_multipliers[name]["distanceFromSun"]
 
-    # Начинаем, планета под углом 0 градусов (по оси X)
+    # Начинаем, планета под углом 0 градусов и на расстоянии start_distance
     planet.goto(start_distance, 0)
     planets[name] = planet
 
@@ -73,9 +61,9 @@ for name, data in planets_data.items():
 
 
 # === Время внутри симуляции ===
-sim_time_speed = 1.0  # x1 — скорость симуляции (можно менять через клавиши)
-is_paused = False        # Флаг паузы
-is_showOrbits = False    # Флаг показа орбит
+sim_time_speed = 1.0  # x1 — скорость симуляции (можно менять через клавиши стрелка вверх/вниз)
+is_paused = False        # Флаг паузы. Пауза — это приостановка симуляции нажатием пробела
+is_showOrbits = True    # Флаг показа орбит. Орбиты показываются по нажатию клаи
 last_update_time = None  # Время последнего обновления для учёта реального времени
 sim_seconds = 0          # Время внутри симуляции в секундах
 
@@ -101,18 +89,14 @@ def restart():
     sim_seconds = 0
 
 def showOrbits():
-    global is_showOrbits
+    global is_showOrbits, planets
     # Если орбиты показаны, то скрываем их, иначе показываем
     if is_showOrbits:
+        DrawOrbits(planets)
         is_showOrbits = False
-        for name in planets:
-            planets[name].penup()
-            planets[name].clear()
     else:
+        ClearOrbits(planets)
         is_showOrbits = True
-        for name in planets:
-            planets[name].pendown()
-
 
 
 # Привязка клавиш. Важен язык раскладки при нажатии клавиш
@@ -166,15 +150,15 @@ def Update():
 
     # === Выводим текущее время внутри симуляции ===
 
-    minutes = sim_seconds / 60 % 60
-    hours = sim_seconds / 60 / 60 % 24
-    days = sim_seconds / 60 / 60 / 24 % (planets_data["Earth"]["orbitalPeriod"] / 60 / 60 / 24)
-    years = sim_seconds / planets_data["Earth"]["orbitalPeriod"]
+    minutes = int(sim_seconds / 60 % 60)
+    hours = int(sim_seconds / 60 / 60 % 24)
+    days = int(sim_seconds / 60 / 60 / 24 % (planets_data["Earth"]["orbitalPeriod"] / 60 / 60 / 24))
+    years = int(sim_seconds / planets_data["Earth"]["orbitalPeriod"])
 
 
 
     time_display.write(
-        f"Время: {int(years)} год:{int(days):3d}:{int(hours):2d}:{int(minutes):2d}:{int(sim_seconds % 60):2d}    {status}    Показать орбиты: {is_showOrbits}",
+        f"Время: {years} год:{days:3d}:{hours:2d}:{minutes:2d}:{int(sim_seconds % 60):2d}    {status}    Показать орбиты: {not is_showOrbits}",
         align="left",
         font=("Courier", 16, "normal")
     )

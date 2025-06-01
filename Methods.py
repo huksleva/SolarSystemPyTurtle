@@ -52,4 +52,20 @@ def UpdateLabelPosition(name, planets_labels, planets):
     planets_labels[name].write(name, align="center", font=("Courier", 10, "bold"))
 
 
+def DrawOrbits(planets):
+    for name in planets:
+        planet = planets[name]
 
+        scale = planets_data_multipliers[name]["distanceFromSun"]
+        r = planets_data[name]["distanceFromSun"]
+        for angle in range(361):
+            x = r * cos(2*pi*angle/360) * scale
+            y = r * sin(2*pi*angle/360) * scale
+            planet.goto(x, y)
+            planet.pendown()
+        planet.penup()
+
+def ClearOrbits(planets):
+    for name in planets:
+        planet = planets[name]
+        planet.clear()
