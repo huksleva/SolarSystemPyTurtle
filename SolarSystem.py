@@ -82,7 +82,10 @@ sim_time_speed = 1.0  # x1 — скорость симуляции (можно �
 is_paused = False        # Флаг паузы
 is_showOrbits = False    # Флаг показа орбит
 last_update_time = None  # Время последнего обновления для учёта реального времени
-sim_seconds = 0 # Время внутри симуляции в секундах
+display_sim_time = 0     # Время (datetime) внутри симуляции
+sim_seconds = 0          # Время внутри симуляции в секундах
+years = 0                # Время внутри симуляции в годах
+
 
 
 
@@ -119,7 +122,7 @@ def showOrbits():
 
 
 
-# Привязка клавиш
+# Привязка клавиш. Важен язык раскладки при нажатии клавиш
 screen.onkeypress(increase_time_speed, "Up")
 screen.onkeypress(decrease_time_speed, "Down")
 screen.onkeypress(toggle_pause, "space")
@@ -130,12 +133,13 @@ screen.listen()
 
 # Начинаем движение
 def Update():
-    global last_update_time, is_paused, sim_seconds
+    global last_update_time, is_paused, sim_seconds, years
 
     screen.update()
 
     if not is_paused:
         current_real_time = datetime.now()
+
 
         if last_update_time is None:
             last_update_time = current_real_time
@@ -158,23 +162,32 @@ def Update():
 
     # === Очищаем предыдущий текст ===
     time_display.clear()
-
-
-    # === Формируем текущее время из simulationTime ===
-    status = "Пауза" if is_paused else f"Скорость: x{sim_time_speed:.2f}"
     time_display.goto(-950, 500)
 
 
 
+    # === Формируем текущее состояние ===
+    status = "Пауза" if is_paused else f"Скорость: x{sim_time_speed:.2f}"
 
+
+
+    # === Выводим текущее время внутри симуляции ===
+
+    minutes = sim_seconds / 60 % 60
+    hours = sim_seconds / 60 / 60 % 24
+    days = sim_seconds / 60 / 60 / 24 % (planets_data["Earth"]["orbitalPeriod"] / 60 / 60 / 24)
+    years = sim_seconds / planets_data["Earth"]["orbitalPeriod"]
 
 
 
     time_display.write(
-        f"Время:    {status}",
+        f"Время: {int(years)}:{int(days):3d}:{int(hours):2d}:{int(minutes):2d}:{int(sim_seconds % 60):2d}    {status}    Показать орбиты: {is_showOrbits}",
         align="left",
         font=("Courier", 16, "normal")
     )
+
+
+
 
     # === Планируем следующее обновление ===
     screen.ontimer(Update, int(DELAY * 1000))
