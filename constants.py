@@ -21,7 +21,8 @@ planets_data = {
         "distanceFromSun": 0,
         "speed": 0,
         "color": "yellow", # Жёлтый
-        "orbitalPeriod": 0
+        "orbitalPeriod": 0,
+        "eccentricity": 0
     },
     "Mercurian": {
         "radius": 244e4,
@@ -29,7 +30,8 @@ planets_data = {
         "distanceFromSun": 579e8,
         "speed": 47870,
         "color": "#A9A9A9", # Темно-серый, скалистый
-        "orbitalPeriod": 7600688
+        "orbitalPeriod": 7600688,
+        "eccentricity": 0.206
     },
     "Venus": {
         "radius": 6051800,
@@ -37,7 +39,8 @@ planets_data = {
         "distanceFromSun": 1082e8,
         "speed": 35020,
         "color": "#FFFFCC", # Белесовато-желтый
-        "orbitalPeriod": 19410240
+        "orbitalPeriod": 19410240,
+        "eccentricity": 0.007
     },
     "Earth": {
         "radius": 6371e3,
@@ -45,7 +48,8 @@ planets_data = {
         "distanceFromSun": 1496e8,
         "speed": 29780,
         "color": "#3D85C6", #
-        "orbitalPeriod": 31558151
+        "orbitalPeriod": 31558151,
+        "eccentricity": 0.017
     },
     "Mars": {
         "radius": 339e4,
@@ -53,7 +57,8 @@ planets_data = {
         "distanceFromSun": 2279e8,
         "speed": 24130,
         "color": "#CC6600", #
-        "orbitalPeriod": 59353728
+        "orbitalPeriod": 59353728,
+        "eccentricity": 0.093
     },
     "Jupiter": {
         "radius": 69911e3,
@@ -61,7 +66,8 @@ planets_data = {
         "distanceFromSun": 7786e8,
         "speed": 13070,
         "color": "#F2D4A2", #
-        "orbitalPeriod": 374434176
+        "orbitalPeriod": 374434176,
+        "eccentricity": 0.048
     },
     "Saturn": {
         "radius": 58232e3,
@@ -69,7 +75,8 @@ planets_data = {
         "distanceFromSun": 14335e8,
         "speed": 9690,
         "color": "#E3C891", #
-        "orbitalPeriod": 930752640
+        "orbitalPeriod": 930752640,
+        "eccentricity": 0.056
     },
     "Uranus": {
         "radius": 25362e3,
@@ -77,7 +84,8 @@ planets_data = {
         "distanceFromSun": 28725e8,
         "speed": 6810,
         "color": "#B2FFFF", #
-        "orbitalPeriod": 2659213440
+        "orbitalPeriod": 2659213440,
+        "eccentricity": 0.047
     },
     "Neptune": {
         "radius": 24622e3,
@@ -85,7 +93,8 @@ planets_data = {
         "distanceFromSun": 44951e8,
         "speed": 5430,
         "color": "#3D66FF", #
-        "orbitalPeriod": 5202620160
+        "orbitalPeriod": 5202620160,
+        "eccentricity": 0.009
     }
 }
 

@@ -1,6 +1,6 @@
 import win32api
 import win32con
-from math import sin, cos, pi
+from math import *
 from constants import *
 
 
@@ -26,18 +26,37 @@ DELAY = 1 / FPS  # ~0.0167 секунд на кадр
 def UpdatePlanetPos(planets, name, total_sim_seconds):
     planet = planets[name]
 
+    data = planets_data[name]
+    if data["orbitalPeriod"] == 0:
+        return  # Не двигается (Солнце)
 
-    # Получаем параметры планеты
-    r = planets_data[name]["distanceFromSun"]
-    period = planets_data[name]["orbitalPeriod"]
+    a = data["distanceFromSun"]  # Большая полуось
+    e = data["eccentricity"]  # Эксцентриситет
+    T = data["orbitalPeriod"]  # Орбитальный период
 
-    # Угол в радианах: θ = 2π * (t / T)
-    angle = 2 * pi * (total_sim_seconds % period) / period
+    # Нормализуем время
+    t = total_sim_seconds % T
+    mean_anomaly = 2 * pi * t / T  # Средняя аномалия
 
-    # Рассчитываем координаты
+    # Решаем уравнение Кеплера методом Ньютона для получения эксцентрической аномалии E
+    E = mean_anomaly
+    for _ in range(100):  # итерации
+        delta = (E - e * sin(E) - mean_anomaly)
+        dE = delta / (1 - e * cos(E))
+        E -= dE
+        if abs(delta) < 1e-6:
+            break
+
+    # Вычисляем истинную аномалию θ из E
+    theta = 2 * atan2(sqrt(1 + e) * sin(E / 2), sqrt(1 - e) * cos(E / 2))
+
+    # Расчёт расстояния до Солнца (по закону эллипса)
+    r = a * (1 - e ** 2) / (1 + e * cos(theta))
+
+    # Масштабируем
     scale = planets_data_multipliers[name]["distanceFromSun"]
-    x = r * cos(angle) * scale
-    y = r * sin(angle) * scale
+    x = r * cos(theta) * scale
+    y = r * sin(theta) * scale
 
     planet.goto(x, y)
 
@@ -53,17 +72,28 @@ def UpdateLabelPosition(name, planets_labels, planets):
 
 def DrawOrbits(planets):
     for name in planets:
+        if name == "Sun":
+            continue
+        data = planets_data[name]
+        a = data["distanceFromSun"]
+        e = data["eccentricity"]
+        scale = planets_data_multipliers[name]["distanceFromSun"]
+
         planet = planets[name]
         start_x = planet.xcor()
         start_y = planet.ycor()
         planet.hideturtle()
-        scale = planets_data_multipliers[name]["distanceFromSun"]
-        r = planets_data[name]["distanceFromSun"]
-        for angle in range(361):
-            x = r * cos(2*pi*angle/360) * scale
-            y = r * sin(2*pi*angle/360) * scale
+
+
+        for angle in range(0, 361, 5):  # шаг 5 градусов
+            theta = radians(angle)
+            r = a * (1 - e**2) / (1 + e * cos(theta))
+            x = r * cos(theta) * scale
+            y = r * sin(theta) * scale
             planet.goto(x, y)
             planet.pendown()
+            planet.dot(1)
+
         planet.penup()
         planet.goto(start_x, start_y)
         planet.showturtle()
