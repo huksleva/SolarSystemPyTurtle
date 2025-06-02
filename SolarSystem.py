@@ -9,7 +9,7 @@ screen = turtle.Screen()
 screen.bgcolor("black")
 screen.setup(MonitorResolution()[0], MonitorResolution()[1], 0, 0)
 screen.title("Симуляция Солнечной системы")
-screen.bgpic("S:\\Leo\\projects\\SolarSystemPyTurtle\\stars.png")
+screen.bgpic("stars.png")
 screen.tracer(0)
 
 
