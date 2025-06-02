@@ -96,9 +96,10 @@ planets_data = {
 smaller_dist = 1 / 4e9
 bigger_size = 9e-8
 
+
+
 # Числа, множители для значений свойств объектов в planets_data.
 # Нужны для нормального отображения объектов, чтобы их было видно на экране
-
 planets_data_multipliers = {
     "Sun": {
         "radius": 1 / 25 * bigger_size,
